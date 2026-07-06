@@ -32,24 +32,19 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.paddingOf(context).bottom;
-    
     return FScaffold(
       // Usamos un Stack para poder poner la barra flotante por encima del contenido
       child: Stack(
         children: [
-          // Contenido principal con padding inferior para no quedar oculto por la barra
+          // Contenido principal (el padding inferior se manejará en cada pantalla)
           Positioned.fill(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 100 + bottomInset), // Espacio para la barra flotante
-              child: IndexedStack(
-                index: _stackIndex,
-                children: const [
-                  InicioScreen(),
-                  HistorialScreen(),
-                  PerfilScreen(),
-                ],
-              ),
+            child: IndexedStack(
+              index: _stackIndex,
+              children: const [
+                InicioScreen(),
+                HistorialScreen(),
+                PerfilScreen(),
+              ],
             ),
           ),
           

@@ -34,7 +34,7 @@ class PremiumBottomNav extends StatelessWidget {
                   height: 72,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    color: theme.colors.foreground,
+                    color: theme.colors.primary,
                     borderRadius: BorderRadius.circular(100),
                     boxShadow: [
                       BoxShadow(
@@ -82,7 +82,7 @@ class PremiumBottomNav extends StatelessWidget {
                   height: 72,
                   width: 72,
                   decoration: BoxDecoration(
-                    color: theme.colors.foreground,
+                    color: theme.colors.primary,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -159,7 +159,7 @@ class _NavItemState extends State<_NavItem> {
               curve: Curves.easeOutCubic,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: widget.isActive ? theme.colors.background.withValues(alpha: 0.15) : Colors.transparent,
+                color: widget.isActive ? Colors.black.withValues(alpha: 0.2) : Colors.transparent,
                 borderRadius: BorderRadius.circular(100),
               ),
               child: Column(
