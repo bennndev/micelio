@@ -76,7 +76,7 @@ Deno.serve(async (req: Request) => {
     const prompt = "Analiza esta imagen y clasifica el residuo que aparece de acuerdo al esquema JSON estructurado proporcionado.";
 
     // Call Gemini API using native fetch
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     
     const geminiResp = await fetch(geminiUrl, {
       method: "POST",

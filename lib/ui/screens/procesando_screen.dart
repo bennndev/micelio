@@ -145,40 +145,42 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
   }
 
   Widget _buildErrorState(FThemeData theme, String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(PhosphorIconsDuotone.warningCircle, size: 64, color: theme.colors.destructive),
-          const SizedBox(height: 24),
-          Text(
-            'Interferencia en la red',
-            style: theme.typography.xl2.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colors.primaryForeground,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(PhosphorIconsDuotone.warningCircle, size: 64, color: theme.colors.destructive),
+            const SizedBox(height: 24),
+            Text(
+              'Interferencia en la red',
+              style: theme.typography.xl2.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colors.primaryForeground,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _viewModel.errorMessage ?? 'Hubo un error de conexión con la red micelial al procesar tu residuo.',
-            textAlign: TextAlign.center,
-            style: theme.typography.md.copyWith(
-              color: theme.colors.primaryForeground.withValues(alpha: 0.8),
+            const SizedBox(height: 12),
+            Text(
+              _viewModel.errorMessage ?? 'Hubo un error de conexión con la red micelial al procesar tu residuo.',
+              textAlign: TextAlign.center,
+              style: theme.typography.md.copyWith(
+                color: theme.colors.primaryForeground.withValues(alpha: 0.8),
+              ),
             ),
-          ),
-          const SizedBox(height: 40),
-          FButton(
-            onPress: () => _procesarAnalisis(imagePath),
-            child: const Text('Reintentar Análisis'),
-          ),
-          const SizedBox(height: 16),
-          FButton(
-            variant: FButtonVariant.outline,
-            onPress: () => Navigator.pushReplacementNamed(context, '/inicio'),
-            child: const Text('Ingresar manualmente'),
-          ),
-        ],
+            const SizedBox(height: 40),
+            FButton(
+              onPress: () => _procesarAnalisis(imagePath),
+              child: const Text('Reintentar Análisis'),
+            ),
+            const SizedBox(height: 16),
+            FButton(
+              variant: FButtonVariant.outline,
+              onPress: () => Navigator.pushReplacementNamed(context, '/inicio'),
+              child: const Text('Ingresar manualmente'),
+            ),
+          ],
+        ),
       ),
     );
   }
