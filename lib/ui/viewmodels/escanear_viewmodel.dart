@@ -100,7 +100,7 @@ class EscanearViewModel extends ChangeNotifier {
       _errorMessage = 'Error de Storage: ${e.message}';
     } catch (e) {
       _hasError = true;
-      _errorMessage = 'Ocurrió un error inesperado al procesar el residuo.';
+      _errorMessage = 'Error inesperado: $e';
     }
 
     // En caso de error
