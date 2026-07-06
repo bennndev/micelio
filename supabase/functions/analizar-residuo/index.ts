@@ -100,7 +100,24 @@ Deno.serve(async (req: Request) => {
 
     if (!geminiResp.ok) {
       const errorText = await geminiResp.text();
-      throw new Error(`Gemini API Error: ${geminiResp.status} - ${errorText}`);
+      let extraInfo = "";
+      
+      // Si es un error 404 (modelo no encontrado), listamos los modelos autorizados de la Key
+      if (geminiResp.status === 404) {
+        try {
+          const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+          const listResp = await fetch(listUrl);
+          if (listResp.ok) {
+            const listData = await listResp.json();
+            const models = listData.models?.map((m: any) => m.name.replace("models/", "")) || [];
+            extraInfo = ` | Modelos disponibles en tu API Key: ${models.join(", ")}`;
+          }
+        } catch (listErr) {
+          extraInfo = ` | No se pudo listar modelos: ${listErr}`;
+        }
+      }
+      
+      throw new Error(`Gemini API Error: ${geminiResp.status} - ${errorText}${extraInfo}`);
     }
 
     const geminiData = await geminiResp.json();
