@@ -63,15 +63,25 @@ class EscanearViewModel extends ChangeNotifier {
 
       final data = response.data as Map<String, dynamic>;
 
-      // 4. Guardar resultado real en la base de datos
+      // 4. Sanitizar y Guardar resultado real en la base de datos
+      double peso = (data['peso_estimado_kg'] as num?)?.toDouble() ?? 0.05;
+      if (peso <= 0.0) {
+        peso = 0.01; // Garantiza cumplir con el CHECK constraint de peso > 0 en la DB
+      }
+
+      double co2 = (data['co2_ahorrado_kg'] as num?)?.toDouble() ?? 0.0;
+      if (co2 < 0.0) {
+        co2 = 0.0; // Previene valores negativos de CO2
+      }
+
       final nuevoResiduo = Residuo(
         userId: user.id,
         tipo: data['tipo'] ?? 'Desconocido',
         material: data['material'] ?? 'Otro',
         reciclable: data['reciclable'] ?? true,
         contenedor: data['contenedor'] ?? 'Gris',
-        pesoEstimadoKg: (data['peso_estimado_kg'] as num?)?.toDouble() ?? 0.05,
-        co2AhorradoKg: (data['co2_ahorrado_kg'] as num?)?.toDouble() ?? 0.0,
+        pesoEstimadoKg: peso,
+        co2AhorradoKg: co2,
         confianza: (data['confianza'] as num?)?.toDouble() ?? 0.5,
         fotoUrl: storagePath,
       );
