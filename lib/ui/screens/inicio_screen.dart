@@ -209,7 +209,7 @@ class _InicioScreenState extends State<InicioScreen> {
         const SizedBox(height: 8),
         FCard(
           title: Text('${_viewModel.retoActual}/${_viewModel.retoTotal} completado', style: theme.typography.sm.copyWith(fontWeight: FontWeight.bold)),
-          subtitle: const Text('Escanea 6 envases esta semana'),
+          subtitle: Text('Escanea ${_viewModel.retoTotal} envases esta semana'),
           child: Padding(
             padding: const EdgeInsets.only(top: 12.0),
             child: FDeterminateProgress(value: progress),

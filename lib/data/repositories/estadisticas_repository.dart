@@ -21,7 +21,28 @@ class EstadisticasRepository {
         .select()
         .eq('user_id', user.id)
         .maybeSingle();
-    if (response == null) return null;
+    if (response == null) {
+      final nuevoRegistro = {
+        'user_id': user.id,
+        'total_escanes': 0,
+        'total_kg_reciclados': 0.0,
+        'total_co2_ahorrado_kg': 0.0,
+        'racha_maxima': 0,
+        'semana_escanes': 0,
+        'semana_kg_reciclados': 0.0,
+        'reto_semanal_objetivo': 5,
+        'reto_semanal_progreso': 0,
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
+      final insertResponse = await _client
+          .from('estadisticas')
+          .insert(nuevoRegistro)
+          .select()
+          .single();
+      
+      return Estadisticas.fromJson(insertResponse);
+    }
     return Estadisticas.fromJson(response);
   }
 

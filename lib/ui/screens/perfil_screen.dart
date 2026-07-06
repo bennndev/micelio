@@ -214,7 +214,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         ),
         const SizedBox(height: 24),
         FCard(
-          title: Text('Siguiente Nivel: Guardián', style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600)),
+          title: Text('Siguiente Nivel: ${_viewModel.proximoNivel}', style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600)),
           subtitle: Text(_viewModel.puntosFaltantesString),
           child: Padding(
             padding: const EdgeInsets.only(top: 12.0),

@@ -79,6 +79,13 @@ class PerfilViewModel extends ChangeNotifier {
     return 'Recolector Novato';
   }
 
+  String get proximoNivel {
+    if (kgTotal >= 100) return 'Guardián del Bosque';
+    if (kgTotal >= 50) return 'Guardián del Bosque';
+    if (kgTotal >= 10) return 'Héroe del Micelio';
+    return 'Recolector Activo';
+  }
+
   double get progressToNextLevel {
     if (kgTotal >= 100) return 1.0;
     // Nivel 0 a 10 kg

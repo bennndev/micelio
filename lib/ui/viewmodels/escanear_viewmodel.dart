@@ -93,7 +93,7 @@ class EscanearViewModel extends ChangeNotifier {
         "nombre": residuoGuardado.tipo,
         "material": residuoGuardado.material,
         "reciclable": residuoGuardado.reciclable,
-        "puntos": (residuoGuardado.reciclable ?? false) ? 15 : 5,
+        "puntos": residuoGuardado.reciclable ? 15 : 5,
         "confianza": ((residuoGuardado.confianza ?? 0.0) * 100.0).toInt(),
         "instrucciones": data['instrucciones'] ?? "Deposita el residuo en el contenedor ${residuoGuardado.contenedor}.",
         "imagePath": urlFirmada,

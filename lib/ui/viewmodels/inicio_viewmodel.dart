@@ -69,11 +69,11 @@ class InicioViewModel extends ChangeNotifier {
     return (url != null && url.toString().isNotEmpty) ? url.toString() : null;
   }
 
-  // Fallbacks de datos de impacto (Mocks requeridos si no hay datos reales en la BD)
-  double get kgReciclados => _estadisticas?.totalKgReciclados ?? 12.5;
-  int get racha => _estadisticas?.rachaMaxima ?? 7;
-  int get retoActual => _estadisticas?.retoSemanalProgreso ?? 4;
-  int get retoTotal => _estadisticas?.retoSemanalObjetivo ?? 6;
+  // Datos de impacto dinámicos reales de la BD
+  double get kgReciclados => _estadisticas?.totalKgReciclados ?? 0.0;
+  int get racha => _estadisticas?.rachaMaxima ?? 0;
+  int get retoActual => _estadisticas?.retoSemanalProgreso ?? 0;
+  int get retoTotal => _estadisticas?.retoSemanalObjetivo ?? 5;
 
   // ──────────────────────────────────────────────
   // GET → Cargar datos de estadísticas e historial
