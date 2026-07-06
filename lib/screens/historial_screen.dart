@@ -202,6 +202,7 @@ class _HistorialScreenState extends State<HistorialScreen> {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
+                reservedSize: 32,
                 getTitlesWidget: (value, meta) {
                   const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
                   return Padding(
