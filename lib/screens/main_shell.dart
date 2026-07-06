@@ -36,7 +36,7 @@ class _MainShellState extends State<MainShell> {
       // Usamos un Stack para poder poner la barra flotante por encima del contenido
       child: Stack(
         children: [
-          // Contenido principal (el padding inferior se manejará en cada pantalla)
+          // Contenido principal que fluye por debajo de la barra flotante
           Positioned.fill(
             child: IndexedStack(
               index: _stackIndex,

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
@@ -32,9 +33,7 @@ class PremiumBottomNav extends StatelessWidget {
               Expanded(
                 child: Container(
                   height: 72,
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
-                    color: theme.colors.primary,
                     borderRadius: BorderRadius.circular(100),
                     boxShadow: [
                       BoxShadow(
@@ -44,30 +43,42 @@ class PremiumBottomNav extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Row(
-                    children: [
-                      _NavItem(
-                        icon: PhosphorIconsRegular.house,
-                        activeIcon: PhosphorIconsFill.house,
-                        label: 'Inicio',
-                        isActive: currentIndex == 0,
-                        onTap: () => onTabSelected(0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: theme.colors.foreground.withValues(alpha: 0.85),
+                        ),
+                        child: Row(
+                          children: [
+                            _NavItem(
+                              icon: PhosphorIconsRegular.house,
+                              activeIcon: PhosphorIconsFill.house,
+                              label: 'Inicio',
+                              isActive: currentIndex == 0,
+                              onTap: () => onTabSelected(0),
+                            ),
+                            _NavItem(
+                              icon: PhosphorIconsRegular.clockCounterClockwise,
+                              activeIcon: PhosphorIconsFill.clockCounterClockwise,
+                              label: 'Historial',
+                              isActive: currentIndex == 1,
+                              onTap: () => onTabSelected(1),
+                            ),
+                            _NavItem(
+                              icon: PhosphorIconsRegular.user,
+                              activeIcon: PhosphorIconsFill.user,
+                              label: 'Perfil',
+                              isActive: currentIndex == 2,
+                              onTap: () => onTabSelected(2),
+                            ),
+                          ],
+                        ),
                       ),
-                      _NavItem(
-                        icon: PhosphorIconsRegular.clockCounterClockwise,
-                        activeIcon: PhosphorIconsFill.clockCounterClockwise,
-                        label: 'Historial',
-                        isActive: currentIndex == 1,
-                        onTap: () => onTabSelected(1),
-                      ),
-                      _NavItem(
-                        icon: PhosphorIconsRegular.user,
-                        activeIcon: PhosphorIconsFill.user,
-                        label: 'Perfil',
-                        isActive: currentIndex == 2,
-                        onTap: () => onTabSelected(2),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -82,7 +93,6 @@ class PremiumBottomNav extends StatelessWidget {
                   height: 72,
                   width: 72,
                   decoration: BoxDecoration(
-                    color: theme.colors.primary,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -92,11 +102,22 @@ class PremiumBottomNav extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Center(
-                    child: Icon(
-                      PhosphorIconsRegular.scan,
-                      color: theme.colors.background,
-                      size: 28,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.colors.foreground.withValues(alpha: 0.85),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            PhosphorIconsRegular.scan,
+                            color: theme.colors.background,
+                            size: 28,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -157,9 +178,9 @@ class _NavItemState extends State<_NavItem> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: widget.isActive ? Colors.black.withValues(alpha: 0.2) : Colors.transparent,
+                color: widget.isActive ? theme.colors.background.withValues(alpha: 0.15) : Colors.transparent,
                 borderRadius: BorderRadius.circular(100),
               ),
               child: Column(
