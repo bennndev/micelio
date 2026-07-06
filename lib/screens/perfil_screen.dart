@@ -214,12 +214,18 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   size: 32,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  logro['titulo'],
-                  textAlign: TextAlign.center,
-                  style: theme.typography.xs.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: obtenido ? theme.colors.foreground : theme.colors.mutedForeground,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      logro['titulo'],
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.typography.xs.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: obtenido ? theme.colors.foreground : theme.colors.mutedForeground,
+                      ),
+                    ),
                   ),
                 ),
               ],

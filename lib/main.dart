@@ -26,12 +26,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final themeData = _isDark ? AppTheme.dark(touch: true) : AppTheme.light(touch: true);
 
-    return FTheme(
-      data: themeData,
-      child: MaterialApp(
-        title: 'Micelio Digital',
-        debugShowCheckedModeBanner: false,
-        themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
+    return MaterialApp(
+      builder: (context, child) => FTheme(
+        data: themeData,
+        child: child!,
+      ),
+      title: 'Micelio Digital',
+      debugShowCheckedModeBanner: false,
+      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,
@@ -49,8 +51,7 @@ class _MyAppState extends State<MyApp> {
           '/escanear': (context) => const EscanearScreen(),
           '/procesando': (context) => const ProcesandoScreen(),
           '/resultado': (context) => const ResultadoScreen(),
-        },
-      ),
+      },
     );
   }
 }

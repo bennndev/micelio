@@ -91,11 +91,18 @@ class _EscanearScreenState extends State<EscanearScreen> {
                     onPress: () => Navigator.pop(context),
                     child: Icon(PhosphorIconsRegular.x, color: Colors.white),
                   ),
-                  Text(
-                    'Encuadra el residuo y toma la foto',
-                    style: theme.typography.sm.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'Encuadra el residuo y toma la foto',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.typography.sm.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                   FButton.icon(
