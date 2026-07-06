@@ -50,7 +50,7 @@ class PremiumBottomNav extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         decoration: BoxDecoration(
-                          color: theme.colors.foreground.withValues(alpha: 0.85),
+                          color: theme.colors.foreground.withValues(alpha: 0.6),
                         ),
                         child: Row(
                           children: [
@@ -108,7 +108,7 @@ class PremiumBottomNav extends StatelessWidget {
                       filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: theme.colors.foreground.withValues(alpha: 0.85),
+                          color: theme.colors.foreground.withValues(alpha: 0.6),
                         ),
                         child: Center(
                           child: Icon(
