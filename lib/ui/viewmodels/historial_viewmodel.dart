@@ -20,6 +20,28 @@ class HistorialViewModel extends ChangeNotifier {
   List<Residuo> get residuos => _residuos;
   String get filtroActivo => _filtroActivo;
 
+  /// Devuelve el peso acumulado por cada día de la semana actual (Lunes a Domingo)
+  List<double> get pesosPorDia {
+    final ahora = DateTime.now();
+    // Encontrar el lunes de esta semana
+    final lunesEstaSemana = ahora.subtract(Duration(days: ahora.weekday - 1));
+    final inicioLunes = DateTime(lunesEstaSemana.year, lunesEstaSemana.month, lunesEstaSemana.day);
+
+    final lista = List<double>.filled(7, 0.0);
+
+    for (final r in _residuos) {
+      if (r.createdAt == null) continue;
+      
+      // Calcular la diferencia en días desde el lunes
+      final diff = r.createdAt!.difference(inicioLunes).inDays;
+      if (diff >= 0 && diff < 7) {
+        final diaSemana = r.createdAt!.weekday - 1; // 0 para lunes, 6 para domingo
+        lista[diaSemana] += r.pesoEstimadoKg;
+      }
+    }
+    return lista;
+  }
+
   // ──────────────────────────────────────────────
   // GET → Filtrar residuos cargados
   // ──────────────────────────────────────────────

@@ -203,12 +203,21 @@ class _HistorialScreenState extends State<HistorialScreen> {
   }
 
   Widget _buildChart(FThemeData theme) {
+    final pesos = _viewModel.pesosPorDia;
+    
+    // Calcular el tope del eje Y dinámicamente con un 15% de margen (mínimo 5.0)
+    double maxVal = 5.0;
+    for (final p in pesos) {
+      if (p > maxVal) maxVal = p;
+    }
+    final double maxY = maxVal + (maxVal * 0.15);
+
     return Padding(
       padding: const EdgeInsets.only(right: 24.0, left: 8.0),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: 10,
+          maxY: maxY,
           barTouchData: BarTouchData(enabled: false),
           titlesData: FlTitlesData(
             show: true,
@@ -218,13 +227,16 @@ class _HistorialScreenState extends State<HistorialScreen> {
                 reservedSize: 32,
                 getTitlesWidget: (value, meta) {
                   const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      dias[value.toInt()],
-                      style: theme.typography.xs.copyWith(color: theme.colors.mutedForeground),
-                    ),
-                  );
+                  if (value.toInt() >= 0 && value.toInt() < dias.length) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        dias[value.toInt()],
+                        style: theme.typography.xs.copyWith(color: theme.colors.mutedForeground),
+                      ),
+                    );
+                  }
+                  return const SizedBox();
                 },
               ),
             ),
@@ -234,15 +246,9 @@ class _HistorialScreenState extends State<HistorialScreen> {
           ),
           gridData: FlGridData(show: false),
           borderData: FlBorderData(show: false),
-          barGroups: [
-            _makeGroupData(0, 5, theme.colors.primary),
-            _makeGroupData(1, 6.5, theme.colors.primary),
-            _makeGroupData(2, 5, theme.colors.primary),
-            _makeGroupData(3, 7.5, theme.colors.primary),
-            _makeGroupData(4, 9, theme.colors.primary),
-            _makeGroupData(5, 4, theme.colors.primary),
-            _makeGroupData(6, 6, theme.colors.primary),
-          ],
+          barGroups: List.generate(7, (index) {
+            return _makeGroupData(index, pesos[index], theme.colors.primary);
+          }),
         ),
       ),
     );
