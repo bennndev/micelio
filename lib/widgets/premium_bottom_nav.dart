@@ -32,7 +32,7 @@ class PremiumBottomNav extends StatelessWidget {
               Expanded(
                 child: Container(
                   height: 72,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     color: theme.colors.primary,
                     borderRadius: BorderRadius.circular(100),
@@ -157,7 +157,7 @@ class _NavItemState extends State<_NavItem> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
                 color: widget.isActive ? Colors.black.withValues(alpha: 0.2) : Colors.transparent,
                 borderRadius: BorderRadius.circular(100),
