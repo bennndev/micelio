@@ -78,39 +78,56 @@ class _EscanearScreenState extends State<EscanearScreen> {
               ),
             ),
 
-            // Barra superior (Top Bar)
+            // Barra superior (Top Bar - Pill)
             Positioned(
               top: 16,
               left: 16,
               right: 16,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FButton.icon(
-                    variant: FButtonVariant.ghost,
-                    onPress: () => Navigator.pop(context),
-                    child: Icon(PhosphorIconsRegular.x, color: Colors.white),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Encuadra el residuo y toma la foto',
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.typography.sm.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: theme.colors.background,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      PhosphorIconsRegular.scan,
+                      size: 28,
+                      color: theme.colors.foreground,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Encuadra el residuo',
+                            style: theme.typography.md.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colors.foreground,
+                            ),
+                          ),
+                          Text(
+                            'y toma la foto',
+                            style: theme.typography.sm.copyWith(
+                              color: theme.colors.foreground.withValues(alpha: 0.8),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  FButton.icon(
-                    variant: FButtonVariant.ghost,
-                    onPress: () => _takePhoto(ImageSource.gallery),
-                    child: Icon(PhosphorIconsRegular.image, color: Colors.white),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(
+                        PhosphorIconsRegular.x,
+                        size: 24,
+                        color: theme.colors.foreground,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
