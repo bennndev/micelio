@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../theme/app_theme.dart';
-
+import '../../data/repositories/auth_repository.dart';
+import '../../theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,22 +11,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final _authRepository = AuthRepository();
+
   @override
   void initState() {
     super.initState();
     _navigateToHome();
   }
 
+  // ──────────────────────────────────────────────
+  // HANDLE → Verificar sesión activa tras delay
+  // ──────────────────────────────────────────────
   Future<void> _navigateToHome() async {
-    // Simular delay para que se vea el splash, luego verificar sesión
     await Future.delayed(const Duration(milliseconds: 1500));
     
     if (mounted) {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session == null) {
-        Navigator.of(context).pushReplacementNamed('/login');
-      } else {
+      if (_authRepository.estaAutenticado) {
         Navigator.of(context).pushReplacementNamed('/inicio');
+      } else {
+        Navigator.of(context).pushReplacementNamed('/login');
       }
     }
   }
@@ -54,14 +56,12 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo de la app
               Image.asset(
                 'assets/images/icon.png',
                 width: 120,
                 height: 120,
               ),
               const SizedBox(height: 24),
-              // Título
               Text(
                 'Micelio Digital',
                 style: FTheme.of(context).typography.xl4.copyWith(
@@ -70,7 +70,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              // Indicador de carga sutil
               const FCircularProgress(),
             ],
           ),

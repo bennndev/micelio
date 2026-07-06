@@ -278,7 +278,7 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 1. Camera Preview a pantalla completa (FittedBox cubre la distorsión)
+          // Camera Preview
           Positioned.fill(
             child: FittedBox(
               fit: BoxFit.cover,
@@ -290,7 +290,7 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
             ),
           ),
 
-          // 2. Scrim (oscurecido exterior) y Viewfinder
+          // Scrim y Viewfinder
           Positioned.fill(
             child: AnimatedBuilder(
               animation: _scanAnimation,
@@ -299,20 +299,20 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
                   painter: _ScannerOverlayPainter(
                     scanValue: _scanAnimation.value,
                     primaryColor: theme.colors.primary,
-                    accentColor: const Color(0xFFDCE775), // Accent glow
+                    accentColor: const Color(0xFFDCE775),
                   ),
                 );
               },
             ),
           ),
 
-          // 3. Flash momentáneo de obturador
+          // Flash momentáneo
           if (_isCapturing)
             Positioned.fill(
               child: Container(color: Colors.white.withValues(alpha: 0.8)),
             ),
 
-          // 4. Barra Superior (Controles + Consejo)
+          // Barra Superior
           Positioned(
             top: MediaQuery.paddingOf(context).top + 16,
             left: 16,
@@ -385,7 +385,7 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
             ),
           ),
 
-          // 5. Controles Inferiores
+          // Controles Inferiores
           Positioned(
             bottom: MediaQuery.paddingOf(context).bottom + 24,
             left: 24,
@@ -409,12 +409,10 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Botón Galería
                         IconButton(
                           onPressed: _pickFromGallery,
                           icon: Icon(PhosphorIconsDuotone.image, color: theme.colors.background, size: 28),
                         ),
-                        // Botón Captura Principal
                         GestureDetector(
                           onTap: _takePhoto,
                           child: Container(
@@ -437,7 +435,6 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
                             ),
                           ),
                         ),
-                        // Botón Cambiar Cámara
                         IconButton(
                           onPressed: _cameras.length > 1 ? _switchCamera : null,
                           icon: Icon(PhosphorIconsDuotone.arrowsClockwise, color: theme.colors.background, size: 28),
@@ -455,7 +452,6 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
   }
 }
 
-// Widget auxiliar para botones con glassmorphism
 class _GlassButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
@@ -485,7 +481,6 @@ class _GlassButton extends StatelessWidget {
   }
 }
 
-// Painter para el overlay de escaneo
 class _ScannerOverlayPainter extends CustomPainter {
   final double scanValue;
   final Color primaryColor;
@@ -499,7 +494,6 @@ class _ScannerOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Definir el tamaño del recuadro
     final double rectWidth = size.width * 0.75;
     final double rectHeight = rectWidth * 1.2;
     final Rect scanRect = Rect.fromCenter(
@@ -509,14 +503,12 @@ class _ScannerOverlayPainter extends CustomPainter {
     );
     final RRect rrect = RRect.fromRectAndRadius(scanRect, const Radius.circular(24));
 
-    // 1. Dibujar el Scrim con "hueco"
     canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
     canvas.drawColor(Colors.black.withValues(alpha: 0.5), BlendMode.srcOver);
     final Paint clearPaint = Paint()..blendMode = BlendMode.clear;
     canvas.drawRRect(rrect, clearPaint);
     canvas.restore();
 
-    // 2. Dibujar las 4 esquinas del viewfinder
     final Paint cornerPaint = Paint()
       ..color = primaryColor
       ..style = PaintingStyle.stroke
@@ -530,7 +522,6 @@ class _ScannerOverlayPainter extends CustomPainter {
     final double right = scanRect.right;
     final double bottom = scanRect.bottom;
 
-    // Top Left
     canvas.drawPath(
       Path()
         ..moveTo(left, top + cornerLength)
@@ -539,7 +530,6 @@ class _ScannerOverlayPainter extends CustomPainter {
         ..lineTo(left + cornerLength, top),
       cornerPaint,
     );
-    // Top Right
     canvas.drawPath(
       Path()
         ..moveTo(right - cornerLength, top)
@@ -548,7 +538,6 @@ class _ScannerOverlayPainter extends CustomPainter {
         ..lineTo(right, top + cornerLength),
       cornerPaint,
     );
-    // Bottom Left
     canvas.drawPath(
       Path()
         ..moveTo(left, bottom - cornerLength)
@@ -557,7 +546,6 @@ class _ScannerOverlayPainter extends CustomPainter {
         ..lineTo(left + cornerLength, bottom),
       cornerPaint,
     );
-    // Bottom Right
     canvas.drawPath(
       Path()
         ..moveTo(right - cornerLength, bottom)
@@ -567,14 +555,13 @@ class _ScannerOverlayPainter extends CustomPainter {
       cornerPaint,
     );
 
-    // 3. Dibujar la línea animada (Scan line) con glow
     final double scanY = (scanRect.top + radius) + (scanRect.height - 2 * radius) * scanValue;
     
     final Paint glowLinePaint = Paint()
       ..color = accentColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4); // Glow
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
       
     final Paint solidLinePaint = Paint()
       ..color = accentColor
@@ -598,4 +585,3 @@ class _ScannerOverlayPainter extends CustomPainter {
     return oldDelegate.scanValue != scanValue;
   }
 }
-

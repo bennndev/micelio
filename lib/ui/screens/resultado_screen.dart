@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../theme/app_theme.dart';
+import '../../theme/app_theme.dart';
 
 class ResultadoScreen extends StatefulWidget {
   const ResultadoScreen({super.key});
@@ -42,6 +42,9 @@ class _ResultadoScreenState extends State<ResultadoScreen> with SingleTickerProv
     Navigator.of(context).pushReplacementNamed('/escanear');
   }
 
+  // ──────────────────────────────────────────────
+  // CALC → Obtener color de contenedor según material
+  // ──────────────────────────────────────────────
   Color _getContainerColor(String material) {
     switch (material.toLowerCase()) {
       case 'plástico':
@@ -61,6 +64,7 @@ class _ResultadoScreenState extends State<ResultadoScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     final theme = FTheme.of(context);
+    
     // Extraer argumentos (JSON + imagePath)
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
     final String nombre = args['nombre'] ?? 'Desconocido';
@@ -106,34 +110,36 @@ class _ResultadoScreenState extends State<ResultadoScreen> with SingleTickerProv
                         ),
                       ),
                     ),
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: theme.colors.secondary,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: theme.colors.primary, width: 2),
-                      image: imagePath != null
-                          ? DecorationImage(
-                              image: FileImage(File(imagePath)),
-                              fit: BoxFit.cover,
-                            )
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: theme.colors.secondary,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: theme.colors.primary, width: 2),
+                        image: imagePath != null
+                            ? DecorationImage(
+                                image: imagePath.startsWith('http')
+                                    ? NetworkImage(imagePath) as ImageProvider
+                                    : FileImage(File(imagePath)),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: imagePath == null
+                          ? Icon(PhosphorIconsDuotone.image, size: 40, color: theme.colors.mutedForeground)
                           : null,
                     ),
-                    child: imagePath == null
-                        ? Icon(PhosphorIconsDuotone.image, size: 40, color: theme.colors.mutedForeground)
-                        : null,
-                  ),
-                  // Badge de Puntos
-                  Positioned(
-                    bottom: -12,
-                    child: FBadge(
-                      variant: FBadgeVariant.primary,
-                      child: Text('+$puntos Puntos'),
+                    // Badge de Puntos
+                    Positioned(
+                      bottom: -12,
+                      child: FBadge(
+                        variant: FBadgeVariant.primary,
+                        child: Text('+$puntos Puntos'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 32),

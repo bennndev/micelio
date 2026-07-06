@@ -4,19 +4,19 @@ import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:micelio_app/theme/app_theme.dart';
-import 'package:micelio_app/screens/splash_screen.dart';
-import 'package:micelio_app/screens/escanear_screen.dart';
-import 'package:micelio_app/screens/procesando_screen.dart';
-import 'package:micelio_app/screens/resultado_screen.dart';
-import 'package:micelio_app/screens/main_shell.dart';
-import 'package:micelio_app/screens/login_screen.dart';
-import 'package:micelio_app/screens/registro_screen.dart';
+import 'package:micelio_app/ui/screens/splash_screen.dart';
+import 'package:micelio_app/ui/screens/escanear_screen.dart';
+import 'package:micelio_app/ui/screens/procesando_screen.dart';
+import 'package:micelio_app/ui/screens/resultado_screen.dart';
+import 'package:micelio_app/ui/screens/main_shell.dart';
+import 'package:micelio_app/ui/screens/login_screen.dart';
+import 'package:micelio_app/ui/screens/registro_screen.dart';
+import 'package:micelio_app/data/supabase/supabase_client.dart';
+import 'package:micelio_app/data/repositories/auth_repository.dart';
 
 Future<void> main() async {
-  await Supabase.initialize(
-    url: 'https://dtugytvcqvvozmiaunpz.supabase.co',
-    publishableKey: 'sb_publishable_wLymKr680bHZQVcFO6Kf8g_pMYurtRe',
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  await MicelioSupabase.initialize();
   runApp(const MyApp());
 }
 
@@ -32,11 +32,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final bool _isDark = false;
   late final StreamSubscription<AuthState> _authSubscription;
+  final _authRepository = AuthRepository();
 
   @override
   void initState() {
     super.initState();
-    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+    _authSubscription = _authRepository.onAuthChange.listen((data) {
       final AuthChangeEvent event = data.event;
       if (event == AuthChangeEvent.signedOut) {
         navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);

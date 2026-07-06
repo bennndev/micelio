@@ -4,7 +4,7 @@ import 'package:forui/forui.dart';
 import 'inicio_screen.dart';
 import 'historial_screen.dart';
 import 'perfil_screen.dart';
-import '../widgets/premium_bottom_nav.dart';
+import '../../widgets/premium_bottom_nav.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});

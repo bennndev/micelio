@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../theme/app_theme.dart';
+import '../viewmodels/escanear_viewmodel.dart';
+import '../../theme/app_theme.dart';
 
 class ProcesandoScreen extends StatefulWidget {
   const ProcesandoScreen({super.key});
@@ -12,6 +13,8 @@ class ProcesandoScreen extends StatefulWidget {
 }
 
 class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerProviderStateMixin {
+  final _viewModel = EscanearViewModel();
+  
   final List<String> _loadingTexts = [
     "Analizando tu residuo...",
     "Consultando la red micelial...",
@@ -21,10 +24,8 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
   
   int _textIndex = 0;
   Timer? _textTimer;
-  Timer? _timeoutTimer;
-  bool _hasError = false;
+  bool _initialized = false;
 
-  // Controlador para animación de pulso del hongo
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
 
@@ -32,7 +33,6 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
   void initState() {
     super.initState();
     
-    // Configurar animación de pulso
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -42,57 +42,38 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    // Cambiar texto cada 2.5 segundos
     _textTimer = Timer.periodic(const Duration(milliseconds: 2500), (timer) {
-      if (mounted && !_hasError) {
+      if (mounted && !_viewModel.hasError && _viewModel.isProcessing) {
         setState(() {
           _textIndex = (_textIndex + 1) % _loadingTexts.length;
         });
       }
     });
-
-    // Iniciar simulación de llamada a Gemini
-    _simulateGeminiVision();
   }
 
-  void _simulateGeminiVision() {
-    setState(() {
-      _hasError = false;
-    });
-    
-    // Timeout de seguridad de 8 segundos
-    _timeoutTimer?.cancel();
-    _timeoutTimer = Timer(const Duration(seconds: 8), () {
-      if (mounted && !_hasError) {
-        setState(() {
-          _hasError = true;
-        });
-      }
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      final imagePath = ModalRoute.of(context)?.settings.arguments as String?;
+      _procesarAnalisis(imagePath ?? '');
+    }
+  }
 
-    // Simulamos la respuesta de la API que tarda unos 4 segundos
-    Future.delayed(const Duration(seconds: 4), () {
-      if (mounted && !_hasError) {
-        _timeoutTimer?.cancel();
-        
-        // Mock JSON de clasificación
-        final mockResult = {
-          "nombre": "Botella de Plástico PET",
-          "material": "Plástico",
-          "reciclable": true,
-          "puntos": 15,
-          "instrucciones": "Vacía el contenido, enjuaga brevemente y aplasta la botella antes de depositarla."
-        };
-
-        Navigator.pushReplacementNamed(context, '/resultado', arguments: mockResult);
-      }
-    });
+  // ──────────────────────────────────────────────
+  // HANDLE → Invocar análisis en el ViewModel
+  // ──────────────────────────────────────────────
+  Future<void> _procesarAnalisis(String imagePath) async {
+    final resultado = await _viewModel.analizarFoto(imagePath);
+    if (resultado != null && mounted) {
+      Navigator.pushReplacementNamed(context, '/resultado', arguments: resultado);
+    }
   }
 
   @override
   void dispose() {
     _textTimer?.cancel();
-    _timeoutTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
@@ -100,28 +81,32 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final theme = FTheme.of(context);
-    
-    // Obtenemos la ruta de la imagen pasada desde el scanner (opcional)
-    final imagePath = ModalRoute.of(context)?.settings.arguments as String?;
+    final imagePath = ModalRoute.of(context)?.settings.arguments as String? ?? '';
 
-    return FScaffold(
-      child: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppTheme.heroBackgroundGradient,
-        ),
-        child: SafeArea(
-          child: _hasError ? _buildErrorState(theme) : _buildLoadingState(theme, imagePath),
-        ),
-      ),
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (context, child) {
+        return FScaffold(
+          child: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: AppTheme.heroBackgroundGradient,
+            ),
+            child: SafeArea(
+              child: _viewModel.hasError 
+                  ? _buildErrorState(theme, imagePath) 
+                  : _buildLoadingState(theme),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildLoadingState(FThemeData theme, String? imagePath) {
+  Widget _buildLoadingState(FThemeData theme) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Animación central pulsante con glow bioluminiscente
         Stack(
           alignment: Alignment.center,
           children: [
@@ -141,12 +126,8 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
           ],
         ),
         const SizedBox(height: 40),
-        
-        // Indicador circular estilizado
         const FCircularProgress(),
         const SizedBox(height: 24),
-        
-        // Texto dinámico con animación de opacidad cruzada
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 500),
           child: Text(
@@ -163,7 +144,7 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
     );
   }
 
-  Widget _buildErrorState(FThemeData theme) {
+  Widget _buildErrorState(FThemeData theme, String imagePath) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -180,7 +161,7 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
           ),
           const SizedBox(height: 12),
           Text(
-            'El análisis tardó demasiado o hubo un error de conexión con el modelo de visión.',
+            _viewModel.errorMessage ?? 'Hubo un error de conexión con la red micelial al procesar tu residuo.',
             textAlign: TextAlign.center,
             style: theme.typography.md.copyWith(
               color: theme.colors.primaryForeground.withValues(alpha: 0.8),
@@ -188,7 +169,7 @@ class _ProcesandoScreenState extends State<ProcesandoScreen> with SingleTickerPr
           ),
           const SizedBox(height: 40),
           FButton(
-            onPress: _simulateGeminiVision,
+            onPress: () => _procesarAnalisis(imagePath),
             child: const Text('Reintentar Análisis'),
           ),
           const SizedBox(height: 16),
