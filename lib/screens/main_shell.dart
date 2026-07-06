@@ -27,10 +27,7 @@ class _MainShellState extends State<MainShell> {
   }
 
   int get _stackIndex {
-    if (_currentIndex == 0) return 0;
-    if (_currentIndex == 2) return 1;
-    if (_currentIndex == 3) return 2;
-    return 0;
+    return _currentIndex;
   }
 
   @override

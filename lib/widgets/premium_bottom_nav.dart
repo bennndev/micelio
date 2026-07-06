@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
@@ -22,68 +21,87 @@ class PremiumBottomNav extends StatelessWidget {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     
     return Padding(
-      padding: EdgeInsets.only(bottom: 12 + bottomInset, left: 24, right: 24),
+      padding: EdgeInsets.only(bottom: 12 + bottomInset, left: 16, right: 16),
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          // Fondo de la barra flotante con Glassmorphism
-          ClipRRect(
-            borderRadius: BorderRadius.circular(32),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                height: 70,
-                decoration: BoxDecoration(
-                  color: theme.colors.background.withValues(alpha: 0.8),
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(
-                    color: theme.colors.border.withValues(alpha: 0.5),
-                    width: 1,
+          Row(
+            children: [
+              // Píldora principal
+              Expanded(
+                child: Container(
+                  height: 72,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: theme.colors.foreground,
+                    borderRadius: BorderRadius.circular(100),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _NavItem(
-                      icon: PhosphorIconsRegular.house,
-                      activeIcon: PhosphorIconsFill.house,
-                      label: 'Inicio',
-                      isActive: currentIndex == 0,
-                      onTap: () => onTabSelected(0),
-                    ),
-                    _NavItem(
-                      icon: PhosphorIconsRegular.scan,
-                      activeIcon: PhosphorIconsFill.scan,
-                      label: 'Escanear',
-                      isActive: false,
-                      onTap: onScanPressed,
-                    ),
-                    _NavItem(
-                      icon: PhosphorIconsRegular.clockCounterClockwise,
-                      activeIcon: PhosphorIconsFill.clockCounterClockwise,
-                      label: 'Historial',
-                      isActive: currentIndex == 2,
-                      onTap: () => onTabSelected(2),
-                    ),
-                    _NavItem(
-                      icon: PhosphorIconsRegular.user,
-                      activeIcon: PhosphorIconsFill.user,
-                      label: 'Perfil',
-                      isActive: currentIndex == 3,
-                      onTap: () => onTabSelected(3),
-                    ),
-                  ],
+                  child: Row(
+                    children: [
+                      _NavItem(
+                        icon: PhosphorIconsRegular.house,
+                        activeIcon: PhosphorIconsFill.house,
+                        label: 'Inicio',
+                        isActive: currentIndex == 0,
+                        onTap: () => onTabSelected(0),
+                      ),
+                      _NavItem(
+                        icon: PhosphorIconsRegular.clockCounterClockwise,
+                        activeIcon: PhosphorIconsFill.clockCounterClockwise,
+                        label: 'Historial',
+                        isActive: currentIndex == 1,
+                        onTap: () => onTabSelected(1),
+                      ),
+                      _NavItem(
+                        icon: PhosphorIconsRegular.user,
+                        activeIcon: PhosphorIconsFill.user,
+                        label: 'Perfil',
+                        isActive: currentIndex == 2,
+                        onTap: () => onTabSelected(2),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              // Botón de cámara (FAB flotante)
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  onScanPressed();
+                },
+                child: Container(
+                  height: 72,
+                  width: 72,
+                  decoration: BoxDecoration(
+                    color: theme.colors.foreground,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(
+                      PhosphorIconsRegular.scan,
+                      color: theme.colors.background,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -116,9 +134,8 @@ class _NavItemState extends State<_NavItem> {
   @override
   Widget build(BuildContext context) {
     final theme = FTheme.of(context);
-    // Usamos primary para el estado activo (texto/icono verde) y un fondo tintado suave
-    // para cumplir la regla de oro: nunca texto blanco sobre fondo primario verde.
-    final color = widget.isActive ? theme.colors.primary : theme.colors.mutedForeground;
+    // Ya que el fondo es oscuro, los iconos y textos deben ser claros
+    final color = widget.isActive ? theme.colors.background : theme.colors.background.withValues(alpha: 0.5);
     
     return Expanded(
       child: GestureDetector(
@@ -140,10 +157,10 @@ class _NavItemState extends State<_NavItem> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: widget.isActive ? theme.colors.primary.withValues(alpha: 0.15) : Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
+                color: widget.isActive ? theme.colors.background.withValues(alpha: 0.15) : Colors.transparent,
+                borderRadius: BorderRadius.circular(100),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -185,4 +202,5 @@ class _NavItemState extends State<_NavItem> {
     );
   }
 }
+
 
