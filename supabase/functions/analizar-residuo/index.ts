@@ -35,38 +35,38 @@ Deno.serve(async (req: Request) => {
 
     // 3. Define the structured output schema (OpenAPI 3.0 representation)
     const residuoSchema = {
-      type: "OBJECT",
+      type: "object",
       properties: {
         tipo: { 
-          type: "STRING", 
+          type: "string", 
           description: "Nombre específico del residuo, ej. 'Botella de agua sin etiqueta', 'Caja de pizza'" 
         },
         material: { 
-          type: "STRING", 
+          type: "string", 
           description: "Material predominante. EXACTAMENTE uno de: plástico, vidrio, papel, cartón, orgánico, metal, otro" 
         },
         reciclable: { 
-          type: "BOOLEAN", 
+          type: "boolean", 
           description: "True si el material es reciclable en un contexto urbano estándar" 
         },
         contenedor: { 
-          type: "STRING", 
+          type: "string", 
           description: "Color del contenedor recomendado. EXACTAMENTE uno de: Amarillo, Azul, Verde, Marrón, Gris" 
         },
         peso_estimado_kg: { 
-          type: "NUMBER", 
+          type: "number", 
           description: "Peso estimado realista en kilogramos del residuo (ej. 0.05)" 
         },
         co2_ahorrado_kg: { 
-          type: "NUMBER", 
+          type: "number", 
           description: "Estimación conservadora de CO2 evitado si se recicla (en kg)" 
         },
         confianza: { 
-          type: "NUMBER", 
+          type: "number", 
           description: "Nivel de confianza de la predicción, número decimal entre 0.0 y 1.0" 
         },
         instrucciones: { 
-          type: "STRING", 
+          type: "string", 
           description: "Breves instrucciones útiles de cómo preparar y depositar el residuo" 
         }
       },
@@ -76,7 +76,7 @@ Deno.serve(async (req: Request) => {
     const prompt = "Analiza esta imagen y clasifica el residuo que aparece de acuerdo al esquema JSON estructurado proporcionado.";
 
     // Call Gemini API using native fetch
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
     const geminiResp = await fetch(geminiUrl, {
       method: "POST",
