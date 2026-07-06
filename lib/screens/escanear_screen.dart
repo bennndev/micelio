@@ -12,6 +12,7 @@ class EscanearScreen extends StatefulWidget {
 
 class _EscanearScreenState extends State<EscanearScreen> {
   final ImagePicker _picker = ImagePicker();
+  bool _mostrarConsejo = true;
 
   Future<void> _takePhoto(ImageSource source) async {
     try {
@@ -79,57 +80,58 @@ class _EscanearScreenState extends State<EscanearScreen> {
             ),
 
             // Barra superior (Top Bar - Pill)
-            Positioned(
-              top: 16,
-              left: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: theme.colors.background,
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      PhosphorIconsRegular.scan,
-                      size: 28,
-                      color: theme.colors.foreground,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Encuadra el residuo',
-                            style: theme.typography.md.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colors.foreground,
-                            ),
-                          ),
-                          Text(
-                            'y toma la foto',
-                            style: theme.typography.sm.copyWith(
-                              color: theme.colors.foreground.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        PhosphorIconsRegular.x,
-                        size: 24,
+            if (_mostrarConsejo)
+              Positioned(
+                top: 16,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: theme.colors.secondary, // Fondo cream según DESIGN.md
+                    borderRadius: BorderRadius.circular(100), // Pill shape
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        PhosphorIconsDuotone.cornersOut, // Duotone según DESIGN.md
+                        size: 28,
                         color: theme.colors.foreground,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Encuadra el residuo',
+                              style: theme.typography.md.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colors.foreground,
+                              ),
+                            ),
+                            Text(
+                              'y toma la foto',
+                              style: theme.typography.sm.copyWith(
+                                color: theme.colors.foreground.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => setState(() => _mostrarConsejo = false),
+                        child: Icon(
+                          PhosphorIconsRegular.x,
+                          size: 24,
+                          color: theme.colors.foreground,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
             // Controles inferiores (Bottom Controls)
             Positioned(
