@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/app_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class InicioScreen extends StatefulWidget {
   const InicioScreen({super.key});
@@ -11,8 +12,45 @@ class InicioScreen extends StatefulWidget {
 }
 
 class _InicioScreenState extends State<InicioScreen> {
-  // Datos Mock
-  final String userName = "Micelio";
+  // Datos del usuario (Dinámicos)
+  String get _nombreUsuario {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return 'Usuario';
+    
+    final metadata = user.userMetadata;
+    if (metadata != null) {
+      if (metadata['nombre_completo'] != null && metadata['nombre_completo'].toString().trim().isNotEmpty) {
+        return metadata['nombre_completo'];
+      }
+      if (metadata['full_name'] != null && metadata['full_name'].toString().trim().isNotEmpty) {
+        return metadata['full_name'];
+      }
+    }
+    
+    if (user.email != null && user.email!.isNotEmpty) {
+      return user.email!.split('@')[0];
+    }
+    
+    return 'Usuario';
+  }
+
+  String get _iniciales {
+    final nombre = _nombreUsuario;
+    if (nombre == 'Usuario') return 'US';
+    final parts = nombre.split(' ');
+    if (parts.length > 1) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return nombre.substring(0, 1).toUpperCase();
+  }
+
+  String? get _avatarUrl {
+    final user = Supabase.instance.client.auth.currentUser;
+    final url = user?.userMetadata?['avatar_url'];
+    return (url != null && url.toString().isNotEmpty) ? url.toString() : null;
+  }
+
+  // Mock data (Impacto y Stats)
   final double kgReciclados = 12.5;
   final int racha = 7;
   final int retoActual = 4;
@@ -42,15 +80,29 @@ class _InicioScreenState extends State<InicioScreen> {
 
     return FScaffold(
       header: FHeader(
-        title: Text('Hola, $userName', style: theme.typography.lg.copyWith(fontWeight: FontWeight.bold)),
+        title: Text('Hola, $_nombreUsuario', style: theme.typography.lg.copyWith(fontWeight: FontWeight.bold)),
         suffixes: [
           GestureDetector(
             onTap: () => Navigator.pushNamed(context, '/perfil'),
-            child: FAvatar(
-              image: const AssetImage('assets/images/icon.png'),
-              fallback: const Text('MC'),
-              size: 40,
-            ),
+            child: _avatarUrl != null
+                ? FAvatar(
+                    image: NetworkImage(_avatarUrl!) as ImageProvider<Object>,
+                    size: 40,
+                  )
+                : Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: theme.colors.primary,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _iniciales, 
+                        style: theme.typography.sm.copyWith(fontWeight: FontWeight.bold, color: theme.colors.primaryForeground)
+                      )
+                    ),
+                  ),
           ),
         ],
       ),

@@ -1,16 +1,26 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:micelio_app/theme/app_theme.dart';
 import 'package:micelio_app/screens/splash_screen.dart';
 import 'package:micelio_app/screens/escanear_screen.dart';
 import 'package:micelio_app/screens/procesando_screen.dart';
 import 'package:micelio_app/screens/resultado_screen.dart';
 import 'package:micelio_app/screens/main_shell.dart';
+import 'package:micelio_app/screens/login_screen.dart';
+import 'package:micelio_app/screens/registro_screen.dart';
 
-void main() {
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'https://dtugytvcqvvozmiaunpz.supabase.co',
+    publishableKey: 'sb_publishable_wLymKr680bHZQVcFO6Kf8g_pMYurtRe',
+  );
   runApp(const MyApp());
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -21,12 +31,33 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final bool _isDark = false;
+  late final StreamSubscription<AuthState> _authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      if (event == AuthChangeEvent.signedOut) {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
+      } else if (event == AuthChangeEvent.signedIn) {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil('/inicio', (route) => false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final themeData = _isDark ? AppTheme.dark(touch: true) : AppTheme.light(touch: true);
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       builder: (context, child) => FTheme(
         data: themeData,
         child: child!,
@@ -47,6 +78,8 @@ class _MyAppState extends State<MyApp> {
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/registro': (context) => const RegistroScreen(),
           '/inicio': (context) => const MainShell(),
           '/escanear': (context) => const EscanearScreen(),
           '/procesando': (context) => const ProcesandoScreen(),

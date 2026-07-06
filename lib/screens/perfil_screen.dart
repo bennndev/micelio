@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/app_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -12,15 +13,54 @@ class PerfilScreen extends StatefulWidget {
 
 class _PerfilScreenState extends State<PerfilScreen> {
   bool _notificacionesActivas = true;
+  bool _isSigningOut = false;
 
-  // Mock data
-  final String userName = "Micelio";
+  // Datos del usuario (Dinámicos)
+  String get _nombreUsuario {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return 'Usuario';
+    
+    final metadata = user.userMetadata;
+    if (metadata != null) {
+      if (metadata['nombre_completo'] != null && metadata['nombre_completo'].toString().trim().isNotEmpty) {
+        return metadata['nombre_completo'];
+      }
+      if (metadata['full_name'] != null && metadata['full_name'].toString().trim().isNotEmpty) {
+        return metadata['full_name'];
+      }
+    }
+    
+    if (user.email != null && user.email!.isNotEmpty) {
+      return user.email!.split('@')[0];
+    }
+    
+    return 'Usuario';
+  }
+
+  String get _iniciales {
+    final nombre = _nombreUsuario;
+    if (nombre == 'Usuario') return 'US';
+    final parts = nombre.split(' ');
+    if (parts.length > 1) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return nombre.substring(0, 1).toUpperCase();
+  }
+
+  String? get _avatarUrl {
+    final user = Supabase.instance.client.auth.currentUser;
+    final url = user?.userMetadata?['avatar_url'];
+    return (url != null && url.toString().isNotEmpty) ? url.toString() : null;
+  }
+
+  // TODO: Obtener estos datos desde las tablas `usuarios` y `estadisticas` usando Supabase.
+  // Actualmente inicializados en su estado por defecto real (0/vacío).
   final String userLevel = "Recolector Novato";
-  final double progressToNextLevel = 0.65;
+  final double progressToNextLevel = 0.0;
   
-  final double kgTotal = 42.5;
-  final double co2Evitado = 15.2;
-  final int maxRacha = 14;
+  final double kgTotal = 0.0;
+  final double co2Evitado = 0.0;
+  final int maxRacha = 0;
 
   final List<Map<String, dynamic>> logros = [
     {'titulo': 'Primer Escaneo', 'icono': PhosphorIconsFill.medal, 'obtenido': true, 'desc': 'Escaneaste tu primer residuo exitosamente.'},
@@ -30,7 +70,31 @@ class _PerfilScreenState extends State<PerfilScreen> {
   ];
 
   void _cerrarSesion() {
-    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+    showDialog(
+      context: context,
+      builder: (context) => FDialog(
+        title: const Text('Cerrar sesión'),
+        body: const Text('¿Seguro que quieres cerrar sesión?'),
+        direction: Axis.horizontal,
+        actions: [
+          FButton(
+            variant: FButtonVariant.outline,
+            onPress: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FButton(
+            variant: FButtonVariant.destructive,
+            onPress: () async {
+              Navigator.pop(context); // Cierra el diálogo
+              setState(() => _isSigningOut = true);
+              await Supabase.instance.client.auth.signOut();
+              // El listener global en main.dart detectará el signedOut y redirigirá a /login
+            },
+            child: const Text('Cerrar sesión'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _mostrarDetalleLogro(Map<String, dynamic> logro) {
@@ -95,13 +159,20 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   const SizedBox(height: 16),
                   FButton(
                     variant: FButtonVariant.destructive,
-                    onPress: _cerrarSesion,
+                    onPress: _isSigningOut ? null : _cerrarSesion,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(PhosphorIconsRegular.signOut, color: theme.colors.destructiveForeground),
+                        if (_isSigningOut)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        else
+                          Icon(PhosphorIconsRegular.signOut, color: theme.colors.destructiveForeground),
                         const SizedBox(width: 8),
-                        const Text('Cerrar sesión'),
+                        Text(_isSigningOut ? 'Cerrando sesión...' : 'Cerrar sesión'),
                       ],
                     ),
                   ),
@@ -126,14 +197,29 @@ class _PerfilScreenState extends State<PerfilScreen> {
               height: 120,
               decoration: AppTheme.bioluminescentGlow(),
             ),
-            FAvatar(
-              image: const AssetImage('assets/images/icon.png'),
-              size: 80,
-            ),
+            _avatarUrl != null
+                ? FAvatar(
+                    image: NetworkImage(_avatarUrl!) as ImageProvider<Object>,
+                    size: 80,
+                  )
+                : Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: theme.colors.primary,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _iniciales, 
+                        style: theme.typography.xl.copyWith(fontWeight: FontWeight.bold, color: theme.colors.primaryForeground)
+                      )
+                    ),
+                  ),
           ],
         ),
         const SizedBox(height: 12),
-        Text(userName, style: theme.typography.xl2.copyWith(fontWeight: FontWeight.bold)),
+        Text(_nombreUsuario, style: theme.typography.xl2.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         FBadge(
           variant: FBadgeVariant.secondary,
