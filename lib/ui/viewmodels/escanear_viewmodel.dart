@@ -98,7 +98,11 @@ class EscanearViewModel extends ChangeNotifier {
     } on StorageException catch (e) {
       _hasError = true;
       _errorMessage = 'Error de Storage: ${e.message}';
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('=== MICELIO ERROR DIAGNOSTICO ===');
+      debugPrint(e.toString());
+      debugPrint(stack.toString());
+      debugPrint('=================================');
       _hasError = true;
       _errorMessage = 'Error inesperado: $e';
     }
