@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:micelio_app/theme/app_theme.dart';
+import 'package:micelio_app/screens/splash_screen.dart';
+import 'package:micelio_app/screens/escanear_screen.dart';
+import 'package:micelio_app/screens/procesando_screen.dart';
+import 'package:micelio_app/screens/resultado_screen.dart';
+import 'package:micelio_app/screens/main_shell.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,11 +20,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isDark = false;
+  final bool _isDark = false;
 
   @override
   Widget build(BuildContext context) {
-    // Generamos el tema de Forui (soporta touch de forma nativa)
     final themeData = _isDark ? AppTheme.dark(touch: true) : AppTheme.light(touch: true);
 
     return FTheme(
@@ -28,7 +32,6 @@ class _MyAppState extends State<MyApp> {
         title: 'Micelio Digital',
         debugShowCheckedModeBanner: false,
         themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
-        // Sincronizamos el Scaffold de Material con los mismos fondos
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,
@@ -39,14 +42,14 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.dark,
           scaffoldBackgroundColor: const Color(0xFF1C2214),
         ),
-        home: MicelioShowcasePage(
-          isDark: _isDark,
-          onThemeToggle: () {
-            setState(() {
-              _isDark = !_isDark;
-            });
-          },
-        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/inicio': (context) => const MainShell(),
+          '/escanear': (context) => const EscanearScreen(),
+          '/procesando': (context) => const ProcesandoScreen(),
+          '/resultado': (context) => const ResultadoScreen(),
+        },
       ),
     );
   }
