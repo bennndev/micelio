@@ -195,7 +195,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.5,
+        childAspectRatio: 1.2,
       ),
       itemCount: logros.length,
       itemBuilder: (context, index) {
@@ -214,7 +214,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   size: 32,
                 ),
                 const SizedBox(height: 8),
-                Expanded(
+                SizedBox(
+                  height: 36,
                   child: Center(
                     child: Text(
                       logro['titulo'],
