@@ -40,14 +40,10 @@ class EscanearViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. Simular el delay de la llamada a Gemini Vision
-      await Future.delayed(const Duration(seconds: 2));
-
+      // 1. Subir imagen a Supabase Storage
       final File imageFile = File(imagePath);
-      // Usar un timestamp como ID provisorio del residuo para el nombre de la foto
       final String tempResiduoId = DateTime.now().millisecondsSinceEpoch.toString();
-
-      // 2. Subir imagen a Supabase Storage
+      
       final String storagePath = await _storageRepository.subirFotoDesdeArchivo(
         residuoId: tempResiduoId,
         file: imageFile,
@@ -56,32 +52,40 @@ class EscanearViewModel extends ChangeNotifier {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) throw Exception('Usuario no autenticado.');
 
-      // 3. Clasificar (Mock de IA) e Insertar en Base de Datos
+      // 2. Obtener URL firmada temporal para que Gemini pueda leer la foto
+      final String urlFirmada = await _storageRepository.obtenerUrlFirmada(storagePath, expiraEnSegundos: 3600);
+
+      // 3. Invocar a Gemini Vision a través de la Edge Function
+      final response = await Supabase.instance.client.functions.invoke(
+        'analizar-residuo',
+        body: {'imageUrl': urlFirmada},
+      );
+
+      final data = response.data as Map<String, dynamic>;
+
+      // 4. Guardar resultado real en la base de datos
       final nuevoResiduo = Residuo(
         userId: user.id,
-        tipo: 'Botella de Plástico PET',
-        material: 'Plástico',
-        reciclable: true,
-        contenedor: 'Amarillo',
-        pesoEstimadoKg: 0.05,
-        co2AhorradoKg: 0.15,
-        confianza: 0.98,
+        tipo: data['tipo'] ?? 'Desconocido',
+        material: data['material'] ?? 'Otro',
+        reciclable: data['reciclable'] ?? true,
+        contenedor: data['contenedor'] ?? 'Gris',
+        pesoEstimadoKg: (data['peso_estimado_kg'] as num?)?.toDouble() ?? 0.05,
+        co2AhorradoKg: (data['co2_ahorrado_kg'] as num?)?.toDouble() ?? 0.0,
+        confianza: (data['confianza'] as num?)?.toDouble() ?? 0.5,
         fotoUrl: storagePath,
       );
 
       final residuoGuardado = await _residuoRepository.guardar(nuevoResiduo);
-
-      // 4. Obtener URL firmada para la foto
-      final String urlFirmada = await _storageRepository.obtenerUrlFirmada(storagePath, expiraEnSegundos: 3600);
 
       // 5. Preparar datos para ResultadoScreen
       _resultado = {
         "nombre": residuoGuardado.tipo,
         "material": residuoGuardado.material,
         "reciclable": residuoGuardado.reciclable,
-        "puntos": 15,
+        "puntos": (residuoGuardado.reciclable ?? false) ? 15 : 5,
         "confianza": ((residuoGuardado.confianza ?? 0.0) * 100.0).toInt(),
-        "instrucciones": "Vacía el contenido, enjuaga brevemente y aplasta la botella antes de depositarla en el contenedor ${residuoGuardado.contenedor}.",
+        "instrucciones": data['instrucciones'] ?? "Deposita el residuo en el contenedor ${residuoGuardado.contenedor}.",
         "imagePath": urlFirmada,
       };
 
