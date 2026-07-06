@@ -113,19 +113,19 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       children: [
                         // Cabecera de Identidad
                         _buildProfileHeader(theme),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
 
                         // Estadísticas Acumuladas
                         Text('Impacto Total', style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
                         _buildStatsRow(theme),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
 
                         // Insignias y Logros
                         Text('Mis Insignias', style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
                         _buildLogrosGrid(theme),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
 
                         // Ajustes de Preferencias
                         Text('Preferencias', style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600)),
@@ -212,7 +212,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
           variant: FBadgeVariant.secondary,
           child: Text(_viewModel.userLevel),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
         FCard(
           title: Text('Siguiente Nivel: ${_viewModel.proximoNivel}', style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600)),
           subtitle: Text(_viewModel.puntosFaltantesString),
