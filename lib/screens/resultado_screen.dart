@@ -89,20 +89,23 @@ class _ResultadoScreenState extends State<ResultadoScreen> with SingleTickerProv
           children: [
             // Celebración + Miniatura
             Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  FadeTransition(
-                    opacity: _glowAnimation,
-                    child: ScaleTransition(
-                      scale: _glowAnimation,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: AppTheme.bioluminescentGlow(),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    FadeTransition(
+                      opacity: _glowAnimation,
+                      child: ScaleTransition(
+                        scale: _glowAnimation,
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: AppTheme.bioluminescentGlow(),
+                        ),
                       ),
                     ),
-                  ),
                   Container(
                     width: 120,
                     height: 120,
@@ -123,13 +126,14 @@ class _ResultadoScreenState extends State<ResultadoScreen> with SingleTickerProv
                   ),
                   // Badge de Puntos
                   Positioned(
-                    bottom: -10,
+                    bottom: -12,
                     child: FBadge(
                       variant: FBadgeVariant.primary,
                       child: Text('+$puntos Puntos'),
                     ),
                   ),
                 ],
+              ),
               ),
             ),
             const SizedBox(height: 32),
@@ -144,22 +148,34 @@ class _ResultadoScreenState extends State<ResultadoScreen> with SingleTickerProv
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Icon(PhosphorIconsFill.trash, color: containerColor, size: 32),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Contenedor recomendado', style: theme.typography.xs),
-                              Text(
-                                material.toUpperCase(),
-                                style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600, color: containerColor),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(PhosphorIconsFill.trash, color: containerColor, size: 32),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Contenedor recomendado',
+                                    style: theme.typography.xs,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    material.toUpperCase(),
+                                    style: theme.typography.sm.copyWith(fontWeight: FontWeight.w600, color: containerColor),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       FBadge(
                         variant: FBadgeVariant.secondary,
                         child: Text('$confianza% precisión'),
