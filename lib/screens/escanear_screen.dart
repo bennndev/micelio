@@ -233,7 +233,7 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
                   ? 'Has denegado el acceso a la cámara. Por favor, ve a la configuración de tu dispositivo y permite el acceso para poder escanear residuos.' 
                   : 'Necesitamos acceso a tu cámara para que la Inteligencia Artificial pueda escanear y clasificar tus residuos fotográficamente.',
               textAlign: TextAlign.center,
-              style: theme.typography.base.copyWith(color: theme.colors.mutedForeground),
+              style: theme.typography.sm.copyWith(color: theme.colors.mutedForeground),
             ),
             const SizedBox(height: 32),
             FButton(
@@ -242,7 +242,7 @@ class _EscanearScreenState extends State<EscanearScreen> with WidgetsBindingObse
             ),
             const SizedBox(height: 16),
             FButton(
-              style: FButtonStyle.outline,
+              variant: FButtonVariant.outline,
               onPress: () => Navigator.pop(context),
               child: const Text('Volver al Inicio'),
             ),
