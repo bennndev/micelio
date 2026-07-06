@@ -4,6 +4,10 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Micelio necesita acceso a tu cámara para escanear residuos fotográficamente.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Micelio necesita acceso a tus fotos para que puedas seleccionar una imagen de un residuo desde tu galería.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
